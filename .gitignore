@@ -5,4 +5,4 @@ test_duplicate
 .mypy_cache
 .git
 .DS_Store
-
+*.exe
