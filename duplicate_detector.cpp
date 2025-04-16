@@ -64,6 +64,7 @@ int main(int argc, char* argv[]){
     }
 
     size_t numRemoved = 0;
+    size_t duplicates = 0;
 
     for (auto &pair : urlToFiles) {
         const std::string &url = pair.first;
@@ -74,6 +75,7 @@ int main(int argc, char* argv[]){
         for (auto &f : vec) {
             std::cout << "    -> " << f << "\n";
         }
+        duplicates+=vec.size()-1;
 
         if (shouldDelete && vec.size() > 1) {
             for (size_t i = 1; i < vec.size(); i++){
@@ -88,6 +90,7 @@ int main(int argc, char* argv[]){
         }
     }
 
+    std::cout << "Number of duplicates: " << duplicates << "\n";
     if (shouldDelete) {
         std::cout << "\nOriginal document count: " << total << "\n"
                   << "Documents removed: " << numRemoved << "\n"

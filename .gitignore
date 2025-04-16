@@ -1,0 +1,8 @@
+
+.vscode
+test_domain
+test_duplicate
+.mypy_cache
+.git
+.DS_Store
+
