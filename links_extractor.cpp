@@ -59,5 +59,4 @@ int main(int argc, char** argv) {
             count++;
         }
     }
-    std::cout << count << " files extracted" << std::endl;
 }
