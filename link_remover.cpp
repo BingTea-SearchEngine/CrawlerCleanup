@@ -2,64 +2,85 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <unordered_map>
+#include <unordered_set>
 #include <filesystem>
 
 namespace fs = std::filesystem;
-
 using std::cout, std::endl;
 
 int main(int argc, char** argv) {
     if (argc < 3) {
-        std::cerr << "Expected: " << argv[0] << "<link directory> <out file path>\n";
-        exit(EXIT_FAILURE);
+        std::cerr << "Usage: " << argv[0] << " <link directory> <output file>\n";
+        return EXIT_FAILURE;
     }
-    std::string dirPath = std::string(argv[1]);
-    std::string outPath = std::string(argv[2]);
+
+    std::string dirPath = argv[1];
+    std::string outPath = argv[2];
     std::string line;
 
-    std::unordered_map<std::string, uint8_t> sources;
+    std::unordered_set<std::string> allSources;
 
-    cout << "Getting source links" << endl;
-
+    cout << "🧭 Pass 1: Collecting all source links..." << endl;
     for (const auto& entry : fs::directory_iterator(dirPath)) {
         if (!entry.is_regular_file()) continue;
 
         std::ifstream f(entry.path());
-
-        cout << "Starting " << entry.path() << "..." << endl;
-        while (std::getline(f, line)) {
-            std::istringstream stream(line);
-            std::string sourceUrl;
-            stream >> sourceUrl;
-            sources.insert({sourceUrl, 0});
+        if (!f) {
+            std::cerr << "Failed to open " << entry.path() << endl;
+            continue;
         }
-        cout << "... Finished " << entry.path() << endl;
-    }
 
-    cout << sources.size() << endl;
-    std::ofstream o(outPath);
-
-    cout << "Writing to file" << endl;
-
-    for (const auto& entry : fs::directory_iterator(dirPath)) {
-        std::ifstream f(entry.path());
-        cout << "Starting " << entry.path() << "..." << endl;
         while (std::getline(f, line)) {
             std::istringstream stream(line);
-            std::string sourceUrl;
-            stream >> sourceUrl;
-            if (sources[sourceUrl] == 1) continue;
-            o << sourceUrl << " ";
-            sources[sourceUrl]++;
-
-            std::string url;
-            while (stream >> url) {
-                if (sources.find(url) == sources.end()) continue;
-                o << url << " ";
+            std::string source;
+            stream >> source;
+            if (!source.empty()) {
+                allSources.insert(source);
             }
-            o << "\n";
         }
-        cout << "... Finished " << entry.path() << endl;
     }
+
+    cout << "✅ Collected " << allSources.size() << " unique sources.\n";
+
+    std::unordered_set<std::string> seenSources;
+    std::ofstream out(outPath);
+    if (!out) {
+        std::cerr << "Failed to open output file.\n";
+        return EXIT_FAILURE;
+    }
+
+    cout << "🛠️ Pass 2: Writing cleaned data..." << endl;
+    for (const auto& entry : fs::directory_iterator(dirPath)) {
+        if (!entry.is_regular_file()) continue;
+
+        std::ifstream f(entry.path());
+        if (!f) {
+            std::cerr << "Failed to open " << entry.path() << endl;
+            continue;
+        }
+
+        while (std::getline(f, line)) {
+            std::istringstream stream(line);
+            std::string source;
+            stream >> source;
+
+            // Skip if already processed
+            if (seenSources.contains(source)) continue;
+            seenSources.insert(source);
+
+            out << source;
+
+            std::string dest;
+            while (stream >> dest) {
+                if (allSources.contains(dest)) {
+                    out << " " << dest;
+                }
+            }
+
+            out << "\n";
+        }
+    }
+
+    cout << "✅ Done. Output written to " << outPath << endl;
+    return 0;
 }
