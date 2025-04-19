@@ -20,24 +20,31 @@ int main(int argc, char** argv) {
 
     std::unordered_map<std::string, uint8_t> sources;
 
+    cout << "Getting source links" << endl;
+
     for (const auto& entry : fs::directory_iterator(dirPath)) {
         if (!entry.is_regular_file()) continue;
 
         std::ifstream f(entry.path());
 
+        cout << "Starting " << entry.path() << "..." << endl;
         while (std::getline(f, line)) {
             std::istringstream stream(line);
             std::string sourceUrl;
             stream >> sourceUrl;
             sources.insert({sourceUrl, 0});
         }
+        cout << "... Finished " << entry.path() << endl;
     }
 
     cout << sources.size() << endl;
     std::ofstream o(outPath);
 
+    cout << "Writing to file" << endl;
+
     for (const auto& entry : fs::directory_iterator(dirPath)) {
         std::ifstream f(entry.path());
+        cout << "Starting " << entry.path() << "..." << endl;
         while (std::getline(f, line)) {
             std::istringstream stream(line);
             std::string sourceUrl;
@@ -53,5 +60,6 @@ int main(int argc, char** argv) {
             }
             o << "\n";
         }
+        cout << "... Finished " << entry.path() << endl;
     }
 }
