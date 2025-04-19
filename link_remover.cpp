@@ -2,75 +2,64 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <unordered_set>
+#include <unordered_map>
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
+using std::cout, std::endl;
+
 int main(int argc, char** argv) {
     if (argc < 3) {
-        std::cerr << "Usage: " << argv[0] << " <link_directory> <deduped_sources.txt>\n";
-        return EXIT_FAILURE;
+        std::cerr << "Expected: " << argv[0] << "<link directory> <out file path>\n";
+        exit(EXIT_FAILURE);
     }
-
-    std::string dirPath = argv[1];
-    std::string sourceFilePath = argv[2];
-    std::string outputFilePath = "cleaned_links.txt";
-
-    std::unordered_set<std::string> validSources;
-    std::unordered_set<std::string> writtenSources;
-
-    std::ifstream sourceFile(sourceFilePath);
+    std::string dirPath = std::string(argv[1]);
+    std::string outPath = std::string(argv[2]);
     std::string line;
 
-    if (!sourceFile) {
-        std::cerr << "Failed to open deduped sources file.\n";
-        return EXIT_FAILURE;
-    }
+    std::unordered_map<std::string, uint8_t> sources;
 
-    // Load valid sources
-    while (std::getline(sourceFile, line)) {
-        if (!line.empty()) {
-            validSources.insert(line);
+    cout << "Getting source links" << endl;
+
+    for (const auto& entry : fs::directory_iterator(dirPath)) {
+        if (!entry.is_regular_file()) continue;
+
+        std::ifstream f(entry.path());
+
+        cout << "Starting " << entry.path() << "..." << endl;
+        while (std::getline(f, line)) {
+            std::istringstream stream(line);
+            std::string sourceUrl;
+            stream >> sourceUrl;
+            sources.insert({sourceUrl, 0});
         }
+        cout << "... Finished " << entry.path() << endl;
     }
 
-    std::ofstream outFile(outputFilePath);
-    if (!outFile) {
-        std::cerr << "Failed to open output file for writing.\n";
-        return EXIT_FAILURE;
-    }
+    cout << sources.size() << endl;
+    std::ofstream o(outPath);
 
-    std::cout << "🚀 Processing files in: " << dirPath << std::endl;
-    for (const auto& file : fs::directory_iterator(dirPath)) {
-        if (!file.is_regular_file()) continue;
+    cout << "Writing to file" << endl;
 
-        std::ifstream in(file.path());
-        if (!in) {
-            std::cerr << "Failed to read: " << file.path() << std::endl;
-            continue;
-        }
+    for (const auto& entry : fs::directory_iterator(dirPath)) {
+        std::ifstream f(entry.path());
+        cout << "Starting " << entry.path() << "..." << endl;
+        while (std::getline(f, line)) {
+            std::istringstream stream(line);
+            std::string sourceUrl;
+            stream >> sourceUrl;
+            if (sources[sourceUrl] == 1) continue;
+            o << sourceUrl << " ";
+            sources[sourceUrl]++;
 
-        while (std::getline(in, line)) {
-            std::istringstream iss(line);
-            std::string source;
-            iss >> source;
-
-            // Skip if not a valid source or already written
-            if (!validSources.count(source) || writtenSources.count(source)) continue;
-            writtenSources.insert(source);
-
-            outFile << source;
-            std::string dest;
-            while (iss >> dest) {
-                if (validSources.count(dest)) {
-                    outFile << " " << dest;
-                }
+            std::string url;
+            while (stream >> url) {
+                if (sources.find(url) == sources.end()) continue;
+                o << url << " ";
             }
-            outFile << "\n";
+            o << "\n";
         }
+        cout << "... Finished " << entry.path() << endl;
     }
-
-    std::cout << "✅ Finished. Output saved to " << outputFilePath << std::endl;
-    return 0;
 }
