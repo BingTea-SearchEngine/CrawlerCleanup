@@ -6,81 +6,71 @@
 #include <filesystem>
 
 namespace fs = std::filesystem;
-using std::cout, std::endl;
 
 int main(int argc, char** argv) {
     if (argc < 3) {
-        std::cerr << "Usage: " << argv[0] << " <link directory> <output file>\n";
+        std::cerr << "Usage: " << argv[0] << " <link_directory> <deduped_sources.txt>\n";
         return EXIT_FAILURE;
     }
 
     std::string dirPath = argv[1];
-    std::string outPath = argv[2];
+    std::string sourceFilePath = argv[2];
+    std::string outputFilePath = "cleaned_links.txt";
+
+    std::unordered_set<std::string> validSources;
+    std::unordered_set<std::string> writtenSources;
+
+    std::ifstream sourceFile(sourceFilePath);
     std::string line;
 
-    std::unordered_set<std::string> allSources;
-
-    cout << "🧭 Pass 1: Collecting all source links..." << endl;
-    for (const auto& entry : fs::directory_iterator(dirPath)) {
-        if (!entry.is_regular_file()) continue;
-
-        std::ifstream f(entry.path());
-        if (!f) {
-            std::cerr << "Failed to open " << entry.path() << endl;
-            continue;
-        }
-
-        while (std::getline(f, line)) {
-            std::istringstream stream(line);
-            std::string source;
-            stream >> source;
-            if (!source.empty()) {
-                allSources.insert(source);
-            }
-        }
-    }
-
-    cout << "✅ Collected " << allSources.size() << " unique sources.\n";
-
-    std::unordered_set<std::string> seenSources;
-    std::ofstream out(outPath);
-    if (!out) {
-        std::cerr << "Failed to open output file.\n";
+    if (!sourceFile) {
+        std::cerr << "Failed to open deduped sources file.\n";
         return EXIT_FAILURE;
     }
 
-    cout << "🛠️ Pass 2: Writing cleaned data..." << endl;
-    for (const auto& entry : fs::directory_iterator(dirPath)) {
-        if (!entry.is_regular_file()) continue;
-
-        std::ifstream f(entry.path());
-        if (!f) {
-            std::cerr << "Failed to open " << entry.path() << endl;
-            continue;
-        }
-
-        while (std::getline(f, line)) {
-            std::istringstream stream(line);
-            std::string source;
-            stream >> source;
-
-            // Skip if already processed
-            if (seenSources.contains(source)) continue;
-            seenSources.insert(source);
-
-            out << source;
-
-            std::string dest;
-            while (stream >> dest) {
-                if (allSources.contains(dest)) {
-                    out << " " << dest;
-                }
-            }
-
-            out << "\n";
+    // Load valid sources
+    while (std::getline(sourceFile, line)) {
+        if (!line.empty()) {
+            validSources.insert(line);
         }
     }
 
-    cout << "✅ Done. Output written to " << outPath << endl;
+    std::ofstream outFile(outputFilePath);
+    if (!outFile) {
+        std::cerr << "Failed to open output file for writing.\n";
+        return EXIT_FAILURE;
+    }
+
+    std::cout << "🚀 Processing files in: " << dirPath << std::endl;
+    for (const auto& file : fs::directory_iterator(dirPath)) {
+        if (!file.is_regular_file()) continue;
+
+        std::ifstream in(file.path());
+        if (!in) {
+            std::cerr << "Failed to read: " << file.path() << std::endl;
+            continue;
+        }
+
+        while (std::getline(in, line)) {
+            std::istringstream iss(line);
+            std::string source;
+            iss >> source;
+
+            // Skip if not a valid source or already written
+            if (!validSources.count(source) || writtenSources.count(source)) continue;
+            writtenSources.insert(source);
+
+            outFile << source;
+            std::string dest;
+            while (iss >> dest) {
+                if (validSources.count(dest)) {
+                    outFile << " " << dest;
+                }
+            }
+            outFile << "\n";
+        }
+    }
+
+    std::cout << "✅ Finished. Output saved to " << outputFilePath << std::endl;
     return 0;
 }
