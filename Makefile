@@ -3,3 +3,7 @@ DuplicateDetector:
 
 LinksExtractor:
 	g++ -O2 -std=c++17 -o links_extractor.exe links_extractor.cpp
+
+LinkRemover:
+	g++ -O2 -std=c++17 -o link_remover.exe link_remover.cpp
+
