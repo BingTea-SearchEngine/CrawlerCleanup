@@ -6,3 +6,5 @@ test_duplicate
 .git
 .DS_Store
 *.exe
+env
+build
