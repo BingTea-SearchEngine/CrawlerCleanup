@@ -1,24 +1,41 @@
 import os
 import sys
 
-APPEND_TEXT = """<prank>
+PRANK = """<prank>
 1
 </prank>
-<crank>
+"""
+CRANK = """<crank>
 1
 </crank>
 """
 
+COMMUNITY = """<community>
+101
+</comunity>
+<communitycount>
+3000
+</communitycount>
+"""
+
 def append_if_missing(file_path):
     try:
+        appendText = ""
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
-            if '<prank>' in content or '<crank>' in content:
-                print(f"Skipped (already contains tags): {file_path}")
+            if "<prank>" not in content:
+                appendText += PRANK
+            if "<crank>" not in content:
+                appendText += CRANK
+            if "<community>" not in content:
+                appendText+=COMMUNITY
+
+            if appendText == "":
+                print(f"Skipping {file_path}")
                 return
 
         with open(file_path, 'a', encoding='utf-8') as f:
-            f.write(APPEND_TEXT)
+            f.write(appendText)
         print(f"Appended to {file_path}")
     except Exception as e:
         print(f"Failed to process {file_path}: {e}")

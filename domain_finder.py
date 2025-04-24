@@ -22,12 +22,12 @@ def extract_url_if_matches(file_path: str, base_url: str):
                     extracted_url = line[start_pos:end_pos]
                     
                     if extracted_url.startswith(base_url):
-                        return (extracted_url, os.path.basename(file_path))
-                    else:
-                        return None
-        return None
+                        os.remove(file_path)
+                        return True
+                    return False
+        return False
     except Exception as e:
-        return None
+        return False
 
 
 def main():
@@ -54,7 +54,7 @@ def main():
 
     total_files = len(all_parsed_files)
 
-    matches = []
+    deleted = 0
     with ProcessPoolExecutor() as executor:
         future_to_file = {
             executor.submit(extract_url_if_matches, f, base_url): f
@@ -63,29 +63,12 @@ def main():
 
         for future in as_completed(future_to_file):
             result = future.result()
-            if result is not None:
-                matches.append(result)
+            if result:
+                deleted+=1
 
-    for (url, filename) in matches:
-        print(f"{url}: {filename}")
-
-    matched_count = len(matches)
-    print(f"Number of document matches: {matched_count}")
-
-    if delete_flag and matched_count > 0:
-        removed_count = 0
-        for (_, filename) in matches:
-            full_path = os.path.join(directory_path, filename)
-            try:
-                os.remove(full_path)
-                removed_count += 1
-            except OSError as e:
-                print(f"Error removing file {full_path}: {e}")
-
-        print()
-        print(f"Original document count: {total_files}")
-        print(f"Documents removed: {removed_count}")
-        print(f"Final document count: {total_files - removed_count}")
+    print(f"Original document count: {total_files}")
+    print(f"Documents removed: {deleted}")
+    print(f"Final document count: {total_files - deleted}")
 
 
 if __name__ == "__main__":

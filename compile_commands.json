@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build",
+  "command": "/usr/bin/c++   -std=gnu++17 -arch arm64 -fPIE -o CMakeFiles/DomainFinder.dir/domain_finder.cpp.o -c /Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/domain_finder.cpp",
+  "file": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/domain_finder.cpp",
+  "output": "CMakeFiles/DomainFinder.dir/domain_finder.cpp.o"
+},
+{
+  "directory": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build",
+  "command": "/usr/bin/c++   -std=gnu++17 -arch arm64 -fPIE -o CMakeFiles/DuplicateDetector.dir/duplicate_detector.cpp.o -c /Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/duplicate_detector.cpp",
+  "file": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/duplicate_detector.cpp",
+  "output": "CMakeFiles/DuplicateDetector.dir/duplicate_detector.cpp.o"
+},
+{
+  "directory": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build",
+  "command": "/usr/bin/c++   -std=gnu++17 -arch arm64 -fPIE -o CMakeFiles/LinkRemover.dir/link_remover.cpp.o -c /Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/link_remover.cpp",
+  "file": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/link_remover.cpp",
+  "output": "CMakeFiles/LinkRemover.dir/link_remover.cpp.o"
+},
+{
+  "directory": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build",
+  "command": "/usr/bin/c++  -I/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/lib -std=gnu++17 -arch arm64 -fPIE -o CMakeFiles/Parser.dir/parser.cpp.o -c /Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/parser.cpp",
+  "file": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/parser.cpp",
+  "output": "CMakeFiles/Parser.dir/parser.cpp.o"
+},
+{
+  "directory": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-build",
+  "command": "/usr/bin/c++  -I/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/lib  -std=c++17 -std=gnu++17 -arch arm64 -fPIC -o CMakeFiles/HtmlParser.dir/lib/Parser.cpp.o -c /Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/lib/Parser.cpp",
+  "file": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/lib/Parser.cpp",
+  "output": "_deps/htmlparser-build/CMakeFiles/HtmlParser.dir/lib/Parser.cpp.o"
+},
+{
+  "directory": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-build",
+  "command": "/usr/bin/c++  -I/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/lib  -std=c++17 -std=gnu++17 -arch arm64 -fPIC -o CMakeFiles/HtmlParser.dir/lib/HtmlTags.cpp.o -c /Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/lib/HtmlTags.cpp",
+  "file": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/lib/HtmlTags.cpp",
+  "output": "_deps/htmlparser-build/CMakeFiles/HtmlParser.dir/lib/HtmlTags.cpp.o"
+},
+{
+  "directory": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-build",
+  "command": "/usr/bin/c++  -I/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/lib  -std=c++17 -std=gnu++17 -arch arm64 -fPIE -o CMakeFiles/parserMain.dir/src/main.cpp.o -c /Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/src/main.cpp",
+  "file": "/Users/wonbinjin/classes/eecs498-search-engine/crawlercleanup/build/_deps/htmlparser-src/src/main.cpp",
+  "output": "_deps/htmlparser-build/CMakeFiles/parserMain.dir/src/main.cpp.o"
+}
+]
